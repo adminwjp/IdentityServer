@@ -1,0 +1,481 @@
+﻿@{
+    Layout = "_Layout";
+    ViewBag.Title = "资源管理";
+}
+@section header
+{
+    <link rel="stylesheet" href="/css/treetable.css" />
+}
+<blockquote class="layui-elem-quote news_search toolList" id="menus">
+</blockquote>
+
+<div class="layui-row">
+
+    <div class="layui-tab">
+        <ul class="layui-tab-title resource_tabs" id="resource_tabs">
+            <li class="layui-this" data-type="resources">资源管理</li>
+            <li data-type="resourceClaims">资源Claim管理</li>
+            <li data-type="resourceProperties">资源Property管理</li>
+            <li data-type="resourceScopes">资源作用域管理</li>
+            <li data-type="resourceSecrets">资源凭证管理</li>
+        </ul>
+
+        <div class="layui-tab-content resource_clildFrame">
+
+            <div class="layui-tab-item layui-show">
+                <div class="layui-col-xs12">
+                    <table class="layui-table"
+                           lay-data="{height: 'full-80', page:true, id:'resources'}"
+                           lay-filter="resources" id="resources" lay-size="sm">
+                        <thead>
+                            <tr>
+                                <th lay-data="{checkbox:true, fixed: true}"></th>
+                                <th lay-data="{field:'id', width:180}">ID</th>
+                                <th lay-data="{field:'enabled', width:150, sort: true}">Enabled</th>
+                                <th lay-data="{field:'name', width:150}">Name</th>
+                                <th lay-data="{field:'display_name', width:135}">DisplayName</th>
+                                <th lay-data="{field:'description', width:180}">Description</th>
+                                <th lay-data="{field:'allowed_access_token_signing_algorithms', width:180}">AllowedAccessTokenSigningAlgorithms</th>
+                                <th lay-data="{field:'show_in_discovery_document', width:180}">ShowInDiscoveryDocument</th>
+                                <th lay-data="{field:'created', width:180}">Created</th>
+                                <th lay-data="{field:'updated', width:180}">Updated</th>
+                                <th lay-data="{field:'last_accessed', width:180}">LastAccessed</th>
+                                <th lay-data="{field:'non_editable', width:180}">NonEditable</th>
+                                <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barList'}"></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="resourceClaims" lay-filter="resourceClaims">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="resourceProperties" lay-filter="resourceProperties">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="resourceScopes" lay-filter="resourceScopes">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="resourceSecrets" lay-filter="resourceSecrets">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/html" id="barList">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="update">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<!--资源添加/编辑窗口/查看窗口-->
+<div id="divEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formEdit">
+
+        <input type="hidden" name="id" v-model="id" />
+
+        <div class="layui-form-item" pane>
+            <label class="layui-form-label">是否可用</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="enabled" v-model="enabled" lay-skin="switch" value="true">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Name</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" v-model="name" required lay-verify="required"
+                       placeholder="请输入Name" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">DisplayName</label>
+            <div class="layui-input-block">
+                <input type="text" name="display_name" v-model="display_name" required lay-verify="required"
+                       placeholder="请输入DisplayName" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Description</label>
+            <div class="layui-input-block">
+                <input type="text" name="description" value="这个家伙很懒,什么也没留下!" v-model="description" required lay-verify="required"
+                       placeholder="请输入Description" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">AllowedAccessTokenSigningAlgorithms</label>
+            <div class="layui-input-block">
+                <input type="text" name="allowed_access_token_signing_algorithms" v-model="allowed_access_token_signing_algorithms"
+                       placeholder="请输入AllowedAccessTokenSigningAlgorithms" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">ShowInDiscoveryDocument</label>
+            <div class="layui-input-block">
+                <input type="text" name="show_in_discovery_document" v-model="show_in_discovery_document"
+                       placeholder="请输入ShowInDiscoveryDocument" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Created</label>
+            <div class="layui-input-block">
+                <input type="text" name="created" v-model="created"
+                       placeholder="请输入Created" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Updated</label>
+            <div class="layui-input-block">
+                <input type="text" name="updated" v-model="updated"
+                       placeholder="请输入Updated" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">LastAccessed</label>
+            <div class="layui-input-block">
+                <input type="text" name="last_accessed" v-model="last_accessed" required lay-verify="required"
+                       placeholder="请输入LastAccessed" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">NonEditable</label>
+            <div class="layui-input-block">
+                <input type="text" name="non_editable" v-model="non_editable" required lay-verify="required"
+                       placeholder="请输入NonEditable" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!--资源Claim添加/编辑窗口/查看窗口-->
+<div id="divResourceClaimsEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formResourceClaimsEdit">
+
+        <input type="hidden" name="id" v-model="id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Type</label>
+            <div class="layui-input-block">
+                <input type="text" name="type" v-model="type" required lay-verify="required"
+                       placeholder="请输入Type" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">资源管理</label>
+            <div class="layui-input-block">
+                <select name="api_resource_id" v-model="api_resource_id" class="layui-input">
+                    <option value="">---请选择资源---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--资源Property添加/编辑窗口/查看窗口-->
+<div id="divResourcePropertiesEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formResourcePropertiesEdit">
+
+        <input type="hidden" name="id" v-model="id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Key</label>
+            <div class="layui-input-block">
+                <input type="text" name="key" v-model="key" required lay-verify="required"
+                       placeholder="请输入Key" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Value</label>
+            <div class="layui-input-block">
+                <input type="text" name="value" v-model="value" required lay-verify="required"
+                       placeholder="请输入Value" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">资源管理</label>
+            <div class="layui-input-block">
+                <select name="api_resource_id" v-model="api_resource_id" class="layui-input">
+                    <option value="">---请选择资源---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--资源作用域添加/编辑窗口/查看窗口-->
+<div id="divResourceScopeEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formResourceScopeEdit">
+
+        <input type="hidden" name="id" v-model="id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Scope</label>
+            <div class="layui-input-block">
+                <input type="text" name="scope" v-model="scope" required lay-verify="required"
+                       placeholder="请输入Scope" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">资源管理</label>
+            <div class="layui-input-block">
+                <select name="api_resource_id" v-model="api_resource_id" class="layui-input">
+                    <option value="">---请选择资源---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--资源凭证添加/编辑窗口/查看窗口-->
+<div id="divResourceSecretEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formResourceSecretEdit">
+
+        <input type="hidden" name="id" v-model="id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">资源管理</label>
+            <div class="layui-input-block">
+                <select name="api_resource_id" v-model="api_resource_id" class="layui-input">
+                    <option value="">---请选择资源---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Value</label>
+            <div class="layui-input-block">
+                <input type="text" name="value" v-model="value" required lay-verify="required"
+                       placeholder="请输入Value" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Expiration</label>
+            <div class="layui-input-block">
+                <input type="text" name="expiration" v-model="expiration"
+                       placeholder="请输入Expiration" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Type</label>
+            <div class="layui-input-block">
+                <input type="text" name="type" v-model="type" required lay-verify="required"
+                       placeholder="请输入Type" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Created</label>
+            <div class="layui-input-block">
+                <input type="text" name="created" v-model="created"
+                       placeholder="请输入Created" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+<script>
+    var options = {
+        url: '/Admin/Resource/Load',
+        add: '/Admin/Resource/Add',
+        update: '/Admin/Resource/Update',
+        delete: '/Admin/Resource/delete',
+        id: 'resources',
+        form: undefined,
+        formId: undefined,
+        menuName: 'resource',
+        key: 'id',
+        tabName: 'resource_tabs',
+        many: true,
+        tabs: {
+            resources: {
+                form: "#formEdit",
+                formId: "#divEdit",
+                reload: true,
+                options: {
+                    elem: '#resources',
+                    id: 'resources',
+                    url: '/admin/Resource/load'
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/Resource/Add',
+                update: '/Admin/Resource/Update',
+                delete: '/Admin/Resource/delete',
+            },
+            resourceClaims: {
+                reload: false,
+                form: "#formResourceClaimsEdit",
+                formId: "#divResourceClaimsEdit",
+                options: {
+                    elem: '#resourceClaims',
+                    id: 'resourceClaims'
+                    , url: '/admin/Resource/Claim'
+                    , cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'api_resource_id', width: 180, title: 'ApiResourceId', sort: true }
+                        , { field: 'id', width: 180, title: 'Id' }
+                        , { field: 'type', width: 180, title: 'Type', sort: true }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/Resource/AddClaim',
+                update: '/Admin/Resource/UpdateClaim',
+                delete: '/Admin/Resource/deleteClaim'
+            },
+            resourceProperties: {
+                reload: false,
+                form: "#formResourcePropertiesEdit",
+                formId: "#divResourcePropertiesEdit",
+                options: {
+                    elem: '#resourceProperties',
+                    id: 'resourceProperties'
+                    , url: '/admin/Resource/Property'
+                    , cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'key', width: 180, title: 'Key', sort: true }
+                        , { field: 'id', width: 180, title: 'Id' }
+                        , { field: 'api_resource_id', width: 180, title: 'ApiResourceId', sort: true }
+                        , { field: 'value', width: 180, title: 'Value' }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/Resource/AddProperty',
+                update: '/Admin/Resource/UpdateProperty',
+                delete: '/Admin/Resource/deleteProperty'
+            },
+            resourceScopes: {
+                reload: false,
+                form: "#formResourceScopeEdit",
+                formId: "#divResourceScopeEdit",
+                options: {
+                    elem: '#resourceScopes',
+                    id: 'resourceScopes'
+                    , url: '/admin/Resource/Scope'
+                    , cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'scope', width: 180, title: 'Scope', sort: true }
+                        , { field: 'id', width: 180, title: 'Id' }
+                        , { field: 'api_resource_id', width: 180, title: 'ApiResourceId', sort: true }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/Resource/AddScope',
+                update: '/Admin/Resource/UpdateScope',
+                delete: '/Admin/Resource/deleteScope'
+            },
+            resourceSecrets: {
+                reload: false,
+                form: "#formResourceSecretEdit",
+                formId: "#divResourceSecretEdit",
+                options: {
+                    elem: '#resourceSecrets',
+                    id: 'resourceSecrets'
+                    , url: '/admin/Resource/Secret'
+                    , cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'description', width: 180, title: 'Description', sort: true }
+                        , { field: 'id', width: 180, title: 'Id' }
+                        , { field: 'api_resource_id', width: 180, title: 'ApiResourceId', sort: true }
+                        , { field: 'value', width: 180, title: 'Value' }
+                        , { field: 'expiration', width: 180, title: 'Expiration' }
+                        , { field: 'type', width: 180, title: 'Type' }
+                        , { field: 'created', width: 180, title: 'Created' }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/Resource/AddSecret',
+                update: '/Admin/Resource/UpdateSecret',
+                delete: '/Admin/Resource/deleteSecret'
+            }
+        }
+    };
+
+    initial(options);
+</script>

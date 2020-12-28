@@ -1,0 +1,161 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+@model Utility.IdentityServer4.LoginViewModel
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+
+    <title>IdentityServer4</title>
+
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <partial name="_Nav" />
+
+    <div class="container body-container">
+        <div class="login-page">
+            <div class="lead">
+                <h1>Login</h1>
+                <p>Choose how to login</p>
+            </div>
+
+            <partial name="_ValidationSummary" />
+
+            <div class="row">
+
+                @if (Model.EnableLocalLogin)
+                {
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Local Account</h2>
+                            </div>
+
+                            <div class="card-body">
+                                <form asp-route="Login">
+                                    <input type="hidden" name="ReturnUrl" />
+
+                                    <div class="form-group">
+                                        <label asp-for="Username"></label>
+                                        <input class="form-control" placeholder="Username" name="Username" autofocus>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Password"></label>
+                                        <input type="password" class="form-control" placeholder="Password" name="Password" autocomplete="off">
+                                    </div>
+                                    @if (Model.AllowRememberLogin)
+                                    {
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <input class="form-check-input" name="RememberLogin">
+                                                <label class="form-check-label" name="RememberLogin">
+                                                    Remember My Login
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                    <button class="btn btn-primary" name="button" value="login">Login</button>
+                                    <button class="btn btn-secondary" name="button" value="cancel">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.VisibleExternalProviders.Any())
+                {
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>External Account</h2>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-inline">
+                                    @foreach (var provider in Model.VisibleExternalProviders)
+                                    {
+                                        <li class="list-inline-item">
+                                            <a class="btn btn-secondary"
+                                               asp-controller="External"
+                                               asp-action="Challenge"
+                                               asp-route-scheme="@provider.AuthenticationScheme"
+                                               asp-route-returnUrl="@Model.ReturnUrl">
+                                                @provider.DisplayName
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
+                {
+                    <div class="alert alert-warning">
+                        <strong>Invalid login request</strong>
+                        There are no login schemes configured for this request.
+                    </div>
+                }
+            </div>
+        </div>
+        <div style="width:500px;height:500px;margin:0 auto;">
+            <form method="post" action="login">
+                <div>
+                    <label>账户：</label>
+                    <input type="text" name="account" />
+                </div>
+                <div>
+                    <label>密码：</label>
+                    <input type="password" name="pwd" />
+                </div>
+                <div>
+                    <button type="submit">登录</button>
+                </div>
+                <div>
+                    没有账户,请先<a href="register">注册</a>
+                    <br />
+                    忘记密码,<a href="login">找回密码</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.slim.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+    <script>
+        function logoutClick() {
+            console.log("logout");
+            var url = "logout?logoutId";
+            var xml = new XMLHttpRequest();
+            xml.method = "post";
+            xml.open("post", url);
+            xml.send("");
+
+            //var temp = document.createElement("form");
+            //temp.action = URL;
+            //temp.method = "logout?logoutId";
+            //temp.style.display = "none";
+            //document.body.appendChild(temp);
+            //temp.submit();
+
+        }
+    </script>
+</body>
+</html>
+
+

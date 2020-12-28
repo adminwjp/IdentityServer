@@ -1,0 +1,133 @@
+﻿@{
+    Layout = "_Layout";
+    ViewBag.Title = "授权认证管理";
+}
+@section header
+{
+    <link rel="stylesheet" href="/css/treetable.css" />
+}
+<blockquote class="layui-elem-quote news_search toolList" id="menus">
+</blockquote>
+
+<div class="layui-row">
+    <div class="layui-col-xs12">
+        <table class="layui-table"
+               lay-data="{height: 'full-80', page:true, id:'persistedGrants'}"
+               lay-filter="persistedGrants" lay-size="sm">
+            <thead>
+                <tr>
+                    <th lay-data="{checkbox:true, fixed: true}"></th>
+                    <th lay-data="{field:'key', width:180}">Key</th>
+                    <th lay-data="{field:'type', width:150, sort: true}">Type</th>
+                    <th lay-data="{field:'subject_id', width:150}">SubjectId</th>
+                    <th lay-data="{field:'session_id', width:135}">SessionId</th>
+                    <th lay-data="{field:'client_id', width:180}">ClientId</th>
+                    <th lay-data="{field:'description', width:180}">Description</th>
+                    <th lay-data="{field:'creation_time', width:180}">CreationTime</th>
+                    <th lay-data="{field:'expiration', width:180}">Expiration</th>
+                    <th lay-data="{field:'consumed_time', width:180}">ConsumedTime</th>
+                    <th lay-data="{field:'data', width:180}">Data</th>
+                    <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barList'}">操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script type="text/html" id="barList">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="update">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<!--用户添加/编辑窗口/查看窗口-->
+<div id="divEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formEdit">
+
+        <input type="hidden" name="key" v-model="key" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Type</label>
+            <div class="layui-input-block">
+                <input type="text" name="type" v-model="type" required lay-verify="required"
+                       placeholder="请输入type" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">SubjectId</label>
+            <div class="layui-input-block">
+                <input type="text" name="subject_id" v-model="subject_id" required lay-verify="required"
+                       placeholder="请输入SubjectId" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">SessionId</label>
+            <div class="layui-input-block">
+                <input type="text" name="session_id" v-model="session_id" required lay-verify="required"
+                       placeholder="请输入SessionId" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">ClientId</label>
+            <div class="layui-input-block">
+                <input type="text" name="client_id" v-model="client_id" required lay-verify="required"
+                       placeholder="请输入ClientId" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Description</label>
+            <div class="layui-input-block">
+                <input type="text" name="description" v-model="description"
+                       placeholder="请输入Description" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item hidden">
+            <label class="layui-form-label">Expiration</label>
+            <div class="layui-input-block">
+                <input type="text" name="expiration" v-model="expiration" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item hidden">
+            <label class="layui-form-label">CreationTime</label>
+            <div class="layui-input-block">
+                <input type="text" name="creation_time" v-model="creation_time" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item hidden">
+            <label class="layui-form-label">Data</label>
+            <div class="layui-input-block">
+                <input type="text" name="data" v-model="data" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+<script>
+    var options = {
+        url: '/Admin/PersistedGrant/Load',
+        add: '/Admin/PersistedGrant/Add',
+        update: '/Admin/PersistedGrant/Update',
+        delete: '/Admin/PersistedGrant/delete',
+        id: 'persistedGrants',
+        menuName: 'PersistedGrant',
+        key:'key'
+    };
+   
+    initial(options);
+</script>

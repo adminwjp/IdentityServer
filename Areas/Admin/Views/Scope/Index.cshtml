@@ -1,0 +1,320 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "作用域管理";
+}
+@section header
+{
+    <link rel="stylesheet" href="/css/treetable.css" />
+}
+<blockquote class="layui-elem-quote news_search toolList" id="menus">
+</blockquote>
+
+<div class="layui-row">
+    <div class="layui-tab">
+        <ul class="layui-tab-title scope_tabs" id="scope_tabs">
+            <li class="layui-this" data-type="scopes">作用域管理</li>
+            <li data-type="scopeClaims">作用域Claim管理</li>
+            <li data-type="scopeProperties">作用域Property管理</li>
+        </ul>
+
+        <div class="layui-tab-content scope_clildFrame">
+
+            <div class="layui-tab-item layui-show">
+                <div class="layui-col-xs12">
+                    <table class="layui-table"
+                           lay-data="{height: 'full-80', page:true, id:'scopes'}" id="scopes"
+                           lay-filter="scopes" lay-size="sm">
+                        <thead>
+                            <tr>
+                                <th lay-data="{checkbox:true, fixed: true}"></th>
+                                <th lay-data="{field:'id', width:180}">ID</th>
+                                <th lay-data="{field:'enabled', width:150, sort: true}">Enabled</th>
+                                <th lay-data="{field:'name', width:150}">Name</th>
+                                <th lay-data="{field:'display_name', width:135}">DisplayName</th>
+                                <th lay-data="{field:'description', width:180}">Description</th>
+                                <th lay-data="{field:'required', width:180}">Required</th>
+                                <th lay-data="{field:'emphasize', width:180}">Emphasize</th>
+                                <th lay-data="{field:'show_in_discovery_document', width:180}">ShowInDiscoveryDocument</th>
+                                <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barList'}">操作</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="scopeClaims" lay-filter="scopeClaims">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="scopeProperties" lay-filter="scopeProperties">
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/html" id="barList">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="update">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<!--作用域添加/编辑窗口/查看窗口-->
+<div id="divEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formEdit">
+
+        <input type="hidden" name="id" v-model="id" />
+
+        <div class="layui-form-item" pane>
+            <label class="layui-form-label">是否可用</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="enabled" v-model="enabled" lay-skin="switch" value="true">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Name</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" v-model="name" required lay-verify="required"
+                       placeholder="请输入Name" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">DisplayName</label>
+            <div class="layui-input-block">
+                <input type="text" name="display_name" v-model="display_name" required lay-verify="required"
+                       placeholder="请输入DisplayName" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Description</label>
+            <div class="layui-input-block">
+                <input type="text" name="description" value="这个家伙很懒,什么也没留下!" v-model="description" required lay-verify="required"
+                       placeholder="请输入Description" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Required</label>
+            <div class="layui-input-block">
+                <input type="text" name="required" v-model="required"
+                       placeholder="请输入Required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Emphasize</label>
+            <div class="layui-input-block">
+                <input type="text" name="emphasize" v-model="emphasize"
+                       placeholder="请输入Emphasize" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">ShowInDiscoveryDocument</label>
+            <div class="layui-input-block">
+                <input type="text" name="show_in_discovery_document" v-model="show_in_discovery_document"
+                       placeholder="请输入ShowInDiscoveryDocument" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--作用域Claim添加/编辑窗口/查看窗口-->
+<div id="divScopeClaimsEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formScopeClaimsEdit">
+
+        <input type="hidden" name="id" v-model="id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Type</label>
+            <div class="layui-input-block">
+                <input type="text" name="type" v-model="type" required lay-verify="required"
+                       placeholder="请输入Type" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">作用域</label>
+            <div class="layui-input-block">
+                <select name="scope_id" v-model="scope_id" class="layui-input">
+                    <option value="">---请选择作用域---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--作用域Property添加/编辑窗口/查看窗口-->
+<div id="divScopePropertiesEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formScopePropertiesEdit">
+
+        <input type="hidden" name="id" v-model="id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Key</label>
+            <div class="layui-input-block">
+                <input type="text" name="key" v-model="key" required lay-verify="required"
+                       placeholder="请输入Key" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Value</label>
+            <div class="layui-input-block">
+                <input type="text" name="value" v-model="value" required lay-verify="required"
+                       placeholder="请输入Value" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">作用域</label>
+            <div class="layui-input-block">
+                <select name="scope_id"  v-model="scope_id" class="layui-input" >
+                    <option value="">---请选择作用域---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+<script>
+    var options = {
+        initForm: function ($,data) {
+            $("input:checkbox[name='enabled']").prop("checked", data.enabled);
+        },
+        init: function ($) {
+            $.ajax({
+                url: "/Admin/scope/scope",
+                type: "get",
+                success: function (data) {
+                    layer.msg(data.note);
+                    if (data.status) {
+                        var str = " <option value=\"\">---请选择作用域---</option>";
+                        for (var i = 0; i < data.data.length; i++) {
+                            str += "option value=\"" + data.data["id"] + "\">" + data.data["name"] + "</option>";
+                        }
+                        i = 0;
+                        $("select[name='scope_id']").map(function (it) {
+                            $($("select[name='scope_id']")[i]).html(str);
+                            i++;
+                        });
+                    }
+                }
+            });
+        },
+        url: '/Admin/scope/Load',
+        add: '/Admin/scope/Add',
+        update: '/Admin/scope/Update',
+        delete: '/Admin/scope/delete',
+        id: 'scopes',
+        form: undefined,
+        formId: undefined,
+        menuName: 'scope',
+        key: 'id',
+        tabName: 'scope_tabs',
+        many: true,
+        tabs: {
+            scopes: {
+                form: "#formEdit",
+                formId: "#divEdit",
+                reload: true,
+                options: {
+                    elem: '#scopes',
+                    id: 'scopes',
+                    url: '/admin/scope/load'
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/scope/Add',
+                update: '/Admin/scope/Update',
+                delete: '/Admin/scope/delete',
+            },
+            scopeClaims: {
+                reload: false,
+                form: "#formScopeClaimsEdit",
+                formId: "#divScopeClaimsEdit",
+                options: {
+                    elem: '#scopeClaims',
+                    id: 'scopeClaims',
+                    url: '/admin/scope/Claim',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'scope_id', width: 180, title: 'ScopeId', sort: true }
+                        , { field: 'id', width: 180, title: 'Id' }
+                        , { field: 'type', width: 180, title: 'Type', sort: true }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/scope/AddClaim',
+                update: '/Admin/scope/UpdateClaim',
+                delete: '/Admin/scope/deleteClaim'
+            },
+            scopeProperties: {
+                reload: false,
+                form: "#formScopePropertiesEdit",
+                formId: "#divScopePropertiesEdit",
+                options: {
+                    elem: '#scopeProperties',
+                    id: 'scopeProperties',
+                    url: '/admin/scope/Property',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'key', width: 180, title: 'Key', sort: true }
+                        , { field: 'Id', width: 180, title: 'Id' }
+                        , { field: 'ScopeId', width: 180, title: 'ScopeId', sort: true }
+                        , { field: 'value', width: 180, title: 'Value' }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/scope/AddProperty',
+                update: '/Admin/scope/UpdateProperty',
+                delete: '/Admin/scope/deleteProperty'
+            }
+        }
+    };
+
+    initial(options);
+</script>

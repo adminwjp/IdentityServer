@@ -1,0 +1,451 @@
+﻿@{
+    Layout = "_Layout";
+    ViewBag.Title = "客户端管理";
+}
+@section header
+{
+    <link rel="stylesheet" href="/css/treetable.css" />
+}
+<blockquote class="layui-elem-quote news_search toolList" id="menus">
+</blockquote>
+
+<div class="layui-row">
+    <div class="layui-tab">
+        <ul class="layui-tab-title client_tabs" id="client_tabs">
+            <li class="layui-this" data-type="clients">客户端管理</li>
+            <li data-type="secrets">客户端凭证管理</li>
+            <li data-type="scopes">客户端作用域管理</li>
+            <li data-type="redirectUris">客户端跳转路劲管理</li>
+            <li data-type="properties">客户端属性管理</li>
+            <li data-type="postLogoutRedirectUris">客户端退出跳转路劲管理</li>
+            <li data-type="idPRestrictions">客户端IdPRestriction管理</li>
+            <li data-type="grantTypes">客户端授权类型管理</li>
+            <li data-type="corsOrigins">客户端跨域管理</li>
+            <li data-type="claims">客户端Claim管理</li>
+        </ul>
+        <div class="layui-tab-content client_clildFrame">
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-table" id="clients" lay-filter="clients" lay-size="sm">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="secrets" lay-filter="secrets">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="scopes" lay-filter="scopes">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="redirectUris" lay-filter="redirectUris">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="properties" lay-filter="properties">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="postLogoutRedirectUris" lay-filter="postLogoutRedirectUris">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="idPRestrictions" lay-filter="idPRestrictions">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="grantTypes" lay-filter="grantTypes">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="corsOrigins" lay-filter="corsOrigins">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="claims" lay-filter="claims">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/html" id="enabled">
+    {{# if(d.enabled){ }}
+    <span class="layui-badge">已禁用</span>
+    {{# } else{}}
+    <span class="layui-badge layui-bg-green">正常</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="barList">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!--用户添加/编辑窗口/查看窗口-->
+<div id="divEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formEdit">
+
+        <input type="hidden" name="Id" v-model="Id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号</label>
+            <div class="layui-input-block">
+                <input type="text" name="user_name" v-model="user_name" required lay-verify="required"
+                       placeholder="请输入登录账号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="normalized_user_name" v-model="normalized_user_name" required lay-verify="required"
+                       placeholder="请输入昵称或姓名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="password_hash" v-model="password_hash" required lay-verify="required"
+                       placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+<script>
+    var options = {
+        url: '/Admin/client/Load',
+        add: '/Admin/client/Add',
+        update: '/Admin/client/Update',
+        delete: '/Admin/client/delete',
+        id: 'clients',
+        form: undefined,
+        formId: undefined,
+        menuName: 'client',
+        key: 'id',
+        tabName: 'client_tabs',
+        many: true,
+        tabs: {
+            clients: {
+                form: "#formEdit",
+                formId: "#divEdit",
+                reload: false,
+                options: {
+                    id: 'clients',
+                    elem: '#clients',
+                    url: '/admin/client/load',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'id', width: 180, title: 'Id', sort: true },
+                        { field: 'client_id', width: 180, title: 'ClientId', sort: true },
+                        { field: 'enabled', width: 180, title: 'enabled', templet: '#enabled' },
+                        { field: 'protocol_type', width: 180, title: 'ProtocolType' },
+                        { field: 'require_client_secret', width: 180, title: 'RequireClientSecret' },
+                        { field: 'client_name', width: 180, title: 'ClientName' },
+                        { field: 'description', width: 180, title: 'Description' },
+                        { field: 'client_uri', width: 180, title: 'ClientUri' },
+                        { field: 'logo_uri', width: 180, title: 'LogoUri' },
+                        { field: 'require_consent', width: 180, title: 'RequireConsent' },
+                        { field: 'allow_remember_consent', width: 180, title: 'AllowRememberConsent' },
+                        { field: 'always_include_user_claims_in_id_token', width: 180, title: 'AlwaysIncludeUserClaimsInIdToken' },
+                        { field: 'require_pkce', width: 180, title: 'RequirePkce' },
+                        { field: 'allow_plain_text_pkce', width: 180, title: 'AllowPlainTextPkce' },
+                        { field: 'require_request_object', width: 180, title: 'RequireRequestObject' },
+                        { field: 'allow_access_tokens_via_browser', width: 180, title: 'AllowAccessTokensViaBrowser' },
+                        { field: 'front_channel_logout_uri', width: 180, title: 'FrontChannelLogoutUri' },
+                        { field: 'front_channel_logout_session_required', width: 180, title: 'FrontChannelLogoutSessionRequired' },
+                        { field: 'back_channel_logout_uri', width: 180, title: 'BackChannelLogoutUri' },
+                        { field: 'back_channel_logout_session_required', width: 180, title: 'BackChannelLogoutSessionRequired' },
+                        { field: 'allow_offline_access', width: 180, title: 'AllowOfflineAccess' },
+                        { field: 'allowed_identity_token_signing_algorithms', width: 180, title: 'AllowedIdentityTokenSigningAlgorithms' },
+                        { field: 'access_token_lifetime', width: 180, title: 'AccessTokenLifetime' },
+                        { field: 'authorization_code_lifetime', width: 180, title: 'AuthorizationCodeLifetime' },
+                        { field: 'consent_lifetime', width: 180, title: 'ConsentLifetime' },
+                        { field: 'absolute_refresh_token_Lifetime', width: 180, title: 'AbsoluteRefreshTokenLifetime' },
+                        { field: 'sliding_refresh_token_lifetime', width: 180, title: 'SlidingRefreshTokenLifetime' },
+                        { field: 'refresh_token_usage', width: 180, title: 'RefreshTokenUsage' },
+                        { field: 'update_access_token_claims_on_refresh', width: 180, title: 'AbsoluteRefreshTokenLifetime' },
+                        { field: 'refresh_token_expiration', width: 180, title: 'RefreshTokenExpiration' },
+                        { field: 'access_token_type', width: 180, title: 'AccessTokenType' },
+                        { field: 'enable_local_login', width: 180, title: 'EnableLocalLogin' },
+                        { field: 'include_jwtId', width: 180, title: 'IncludeJwtId' },
+                        { field: 'always_send_client_claims', width: 180, title: 'AlwaysSendClientClaims' },
+                        { field: 'client_claims_prefix', width: 180, title: 'ClientClaimsPrefix' },
+                        { field: 'pair_wise_subject_salt', width: 180, title: 'PairWiseSubjectSalt' },
+                        { field: 'created', width: 180, title: 'Created' },
+                        { field: 'updated', width: 180, title: 'Updated' },
+                        { field: 'last_accessed', width: 180, title: 'LastAccessed' },
+                        { field: 'user_sso_lifetime', width: 180, title: 'UserSsoLifetime' },
+                        { field: 'user_code_type', width: 180, title: 'UserCodeType' },
+                        { field: 'device_code_lifetime', width: 180, title: 'DeviceCodeLifetime' },
+                        { field: 'non_editable', width: 180, title: 'NonEditable' },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/Add',
+                update: '/Admin/client/Update',
+                delete: '/Admin/client/delete',
+            },
+            secrets: {
+                reload: false,
+                form: "#formSecretEdit",
+                formId: "#divSecretEdit",
+                options: {
+                    id: 'secrets',
+                    elem: '#secrets',
+                    url: '/admin/client/Secret',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'id', width: 180, title: 'Id', sort: true },
+                        { field: 'description', width: 180, title: 'Description' },
+                        { field: 'expiration', width: 180, title: 'Expiration', sort: true },
+                        { field: 'value', width: 180, title: 'Value' },
+                        { field: 'type', width: 180, title: 'Type' },
+                        { field: 'created', width: 180, title: 'Created' },
+                        { field: 'client_id', width: 180, title: 'ClientId' },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddSecret',
+                update: '/Admin/client/UpdateSecret',
+                delete: '/Admin/client/deleteSecret'
+            },
+            scopes: {
+                reload: false,
+                form: "#formScopeEdit",
+                formId: "#divScopeEdit",
+                options: {
+                    elem: '#scopes',
+                    id: 'scopes',
+                    url: '/admin/client/Scope',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'client_id', width: 180, title: 'ClientId', sort: true },
+                        { field: 'scope', width: 180, title: 'Scope' },
+                        { field: 'id', width: 180, title: 'Id', sort: true },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' },
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddScope',
+                update: '/Admin/client/UpdateScope',
+                delete: '/Admin/client/deleteScope'
+            },
+            redirectUris: {
+                reload: false,
+                form: "#formRedirectUriEdit",
+                formId: "#divRedirectUriEdit",
+                options: {
+                    elem: '#redirectUris',
+                    id: 'redirectUris',
+                    url: '/admin/client/RedirectUri',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'client_id', width: 180, title: 'ClientId', sort: true },
+                        { field: 'id', width: 180, title: 'Id' },
+                        { field: 'redirect_uri', width: 180, title: 'RedirectUri', sort: true },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddRedirectUri',
+                update: '/Admin/client/UpdateRedirectUri',
+                delete: '/Admin/client/deleteRedirectUri'
+            },
+            properties: {
+                reload: false,
+                form: "#formPropertyEdit",
+                formId: "#divPropertyEdit",
+                options: {
+                    elem: '#properties',
+                    id: 'properties',
+                    url: '/admin/client/Property',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'key', width: 180, title: 'Key', sort: true },
+                        { field: 'id', width: 180, title: 'Id' },
+                        { field: 'value', width: 180, title: 'Value', sort: true },
+                        { field: 'client_id', width: 180, title: 'ClientId' },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddProperty',
+                update: '/Admin/client/UpdateProperty',
+                delete: '/Admin/client/deleteProperty'
+            },
+            postLogoutRedirectUris: {
+                reload: false,
+                form: "#formPostLogoutRedirectUriEdit",
+                formId: "#divPostLogoutRedirectUriEdit",
+                options: {
+                    elem: '#postLogoutRedirectUris',
+                    id: 'postLogoutRedirectUris',
+                    url: '/admin/client/PostLogoutRedirectUri',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'client_id', width: 180, title: 'ClientId', sort: true },
+                        { field: 'id', width: 180, title: 'Id' },
+                        { field: 'post_logout_redirect_uri', width: 180, title: 'PostLogoutRedirectUri', sort: true },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' },
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddPostLogoutRedirectUri',
+                update: '/Admin/client/UpdatePostLogoutRedirectUri',
+                delete: '/Admin/client/deletePostLogoutRedirectUri'
+            },
+            idPRestrictions: {
+                reload: false,
+                form: "#formIdPRestrictionEdit",
+                formId: "#divIdPRestrictionEdit",
+                options: {
+                    elem: '#idPRestrictions',
+                    id: 'idPRestrictions',
+                    url: '/admin/client/IdPRestriction',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'client_id', width: 180, title: 'ClientId', sort: true },
+                        { field: 'id', width: 180, title: 'Id' },
+                        { field: 'provider', width: 180, title: 'Provider', sort: true },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddPostIdPRestriction',
+                update: '/Admin/client/UpdateIdPRestriction',
+                delete: '/Admin/client/deleteIdPRestriction'
+            },
+            grantTypes: {
+                reload: false,
+                form: "#formGrantTypeEdit",
+                formId: "#divGrantTypeEdit",
+                options: {
+                    elem: '#grantTypes',
+                    id: 'grantTypes',
+                    url: '/admin/client/GrantType',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'client_id', width: 180, title: 'ClientId', sort: true },
+                        { field: 'id', width: 180, title: 'Id' },
+                        { field: 'grant_type', width: 180, title: 'GrantType', sort: true },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddGrantType',
+                update: '/Admin/client/UpdateGrantType',
+                delete: '/Admin/client/deleteGrantType'
+            },
+            corsOrigins: {
+                reload: false,
+                form: "#formCorsOriginEdit",
+                formId: "#divCorsOriginEdit",
+                options: {
+                    elem: '#corsOrigins',
+                    id: 'corsOrigins',
+                    url: '/admin/client/CorsOrigin',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'client_id', width: 180, title: 'ClientId', sort: true },
+                        { field: 'id', width: 180, title: 'Id' },
+                        { field: 'origin', width: 180, title: 'Origin', sort: true },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddCorsOrigin',
+                update: '/Admin/client/UpdateCorsOrigin',
+                delete: '/Admin/client/deleteCorsOrigin'
+            },
+            claims: {
+                reload: false,
+                form: "#formClaimEdit",
+                formId: "#divClaimEdit",
+                options: {
+                    elem: '#claims',
+                    id: 'claims',
+                    url: '/admin/client/Claim',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'client_id', width: 180, title: 'ClientId', sort: true },
+                        { field: 'id', width: 180, title: 'Id' },
+                        { field: 'type', width: 180, title: 'Type', sort: true },
+                        { field: 'value', width: 180, title: 'Value' },
+                        { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/client/AddClaim',
+                update: '/Admin/client/UpdateClaim',
+                delete: '/Admin/client/deleteClaim'
+            }
+        }
+    };
+
+    initial(options);
+</script>
+

@@ -1,0 +1,476 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section header
+{
+    <link rel="stylesheet" href="/css/treetable.css" />
+}
+<blockquote class="layui-elem-quote news_search toolList" id="menus">
+</blockquote>
+
+<div class="layui-row">
+    <div class="layui-tab">
+        <ul class="layui-tab-title user_tabs" id="user_tabs">
+            <li class="layui-this" data-type="users">用户管理</li>
+            <li data-type="roles">角色管理</li>
+            <li data-type="tokens">用户Token管理</li>
+            <li data-type="userLogins">用户登录管理</li>
+            <li data-type="userClaims">用户Claim管理</li>
+            <li data-type="roleClaims">角色Claim管理</li>
+        </ul>
+        <div class="layui-tab-content user_clildFrame">
+
+            <div class="layui-tab-item layui-show">
+                <div class="layui-col-xs2">
+                    <ul id="tree" class="ztree"
+                        style="padding: 2px; border: 1px solid #ddd; overflow: auto;">
+                    </ul>
+                </div>
+                <div class="layui-col-xs10">
+                    <table class="layui-table"
+                           lay-data="{height: 'full-80', page:true, id:'users'}"
+                           lay-filter="users" id="users" lay-size="sm">
+                        <thead>
+                            <tr>
+                                <th lay-data="{checkbox:true, fixed: true}"></th>
+                                <th lay-data="{field:'id', width:180}">ID</th>
+                                <th lay-data="{field:'user_name', width:150, sort: true}">账号</th>
+                                <th lay-data="{field:'normalized_user_name', width:150}">用户名</th>
+                                <th lay-data="{field:'email', width:135}">邮件</th>
+                                <th lay-data="{field:'normalized_email', width:180}">标准邮件</th>
+                                <th lay-data="{field:'email_confirmed', width:180}">确认邮件</th>
+                                <th lay-data="{field:'password_hash', width:180}">密码</th>
+                                <th lay-data="{field:'security_stamp', width:180}">安全</th>
+                                <th lay-data="{field:'concurrency_stamp', width:180}">concurrency_stamp</th>
+                                <th lay-data="{field:'phone_number', width:180}">手机号</th>
+                                <th lay-data="{field:'phone_number_confirmed', width:180}">手机号确认</th>
+                                <th lay-data="{field:'two_factor_enabled', width:180}">TwoFactorEnabled</th>
+                                <th lay-data="{field:'lockout_end', width:180}">LockoutEnd</th>
+                                <th lay-data="{field:'lockout_enabled', width:180}">LockoutEnabled</th>
+                                <th lay-data="{field:'access_failed_count', width:180}">AccessFailedCount</th>
+                                <th lay-data="{field:'card_number', width:180}">CardNumber</th>
+                                <th lay-data="{field:'security_number', width:180}">SecurityNumber</th>
+                                <th lay-data="{field:'expiration', width:180}">Expiration</th>
+                                <th lay-data="{field:'card_holder_name', width:180}">CardHolderName</th>
+                                <th lay-data="{field:'card_type', width:180}">CardType</th>
+                                <th lay-data="{field:'street', width:180}">Street</th>
+                                <th lay-data="{field:'city', width:180}">City</th>
+                                <th lay-data="{field:'state', width:180}">State</th>
+                                <th lay-data="{field:'country', width:180}">Country</th>
+                                <th lay-data="{field:'zip_code', width:180}">ZipCode</th>
+                                <th lay-data="{field:'last_name', width:180}">LastName</th>
+                                <th lay-data="{fixed: 'right', width:160, align:'center', toolbar: '#barList'}"></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="roles" lay-filter="roles">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="tokens" lay-filter="tokens">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="userLogins" lay-filter="userLogins">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="userClaims" lay-filter="userClaims">
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <div class="layui-col-xs12">
+                    <table class="layui-hide" id="roleClaims" lay-filter="roleClaims">
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script type="text/html" id="barList">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="update">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<!--用户添加/编辑窗口/查看窗口-->
+<div id="divEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formEdit">
+
+        <input type="hidden" name="Id" v-model="Id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号</label>
+            <div class="layui-input-block">
+                <input type="text" name="user_name" v-model="user_name" required lay-verify="required"
+                       placeholder="请输入登录账号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="normalized_user_name" v-model="normalized_user_name" required lay-verify="required"
+                       placeholder="请输入昵称或姓名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="password_hash" v-model="password_hash" required lay-verify="required"
+                       placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--角色添加/编辑窗口/查看窗口-->
+<div id="divRoleEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formRoleEdit">
+
+        <input type="hidden" name="Id" v-model="Id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Name</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" v-model="name" required lay-verify="required"
+                       placeholder="请输入Name" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">NormalizedName</label>
+            <div class="layui-input-block">
+                <input type="text" name="normalized_name" v-model="normalized_name" required lay-verify="required"
+                       placeholder="请输入NormalizedName" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">ConcurrencyStamp</label>
+            <div class="layui-input-block">
+                <input type="text" name="concurrency_stamp" v-model="concurrency_stamp" required lay-verify="required"
+                       placeholder="请输入ConcurrencyStamp" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--用户Token添加/编辑窗口/查看窗口-->
+<div id="divTokenEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formTokenEdit">
+
+        <input type="hidden" name="Id" v-model="Id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户管理</label>
+            <div class="layui-input-block">
+                <select name="user_id" v-model="user_id" class="layui-input">
+                    <option value="">---请选择用户---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Name</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" v-model="name" required lay-verify="required"
+                       placeholder="请输入Name" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Value</label>
+            <div class="layui-input-block">
+                <input type="text" name="value" v-model="value" required lay-verify="required"
+                       placeholder="请输入Value" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">LoginProvider</label>
+            <div class="layui-input-block">
+                <input type="text" name="login_provider" v-model="login_provider" required lay-verify="required"
+                       placeholder="请输入LoginProvider" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--用户Claim添加/编辑窗口/查看窗口-->
+<div id="divUserClaimEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formUserClaimEdit">
+
+        <input type="hidden" name="Id" v-model="Id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户管理</label>
+            <div class="layui-input-block">
+                <select name="user_id" v-model="user_id" class="layui-input">
+                    <option value="">---请选择用户---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">ClaimType</label>
+            <div class="layui-input-block">
+                <input type="text" name="claim_type" v-model="claim_type" required lay-verify="required"
+                       placeholder="请输入ClaimType" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">ClaimValue</label>
+            <div class="layui-input-block">
+                <input type="text" name="claim_value" v-model="claim_value" required lay-verify="required"
+                       placeholder="请输入ClaimValue" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--角色Claim添加/编辑窗口/查看窗口-->
+<div id="divRoleClaimEdit" style="display: none">
+    <form class="layui-form layui-form-pane" action="" id="formRoleClaimEdit">
+
+        <input type="hidden" name="Id" v-model="Id" />
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色管理</label>
+            <div class="layui-input-block">
+                <select name="role_id" v-model="role_id" class="layui-input">
+                    <option value="">---请选择角色---</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">ClaimType</label>
+            <div class="layui-input-block">
+                <input type="text" name="claim_type" v-model="claim_type" required lay-verify="required"
+                       placeholder="请输入ClaimType" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">ClaimValue</label>
+            <div class="layui-input-block">
+                <input type="text" name="claim_value" v-model="claim_value" required lay-verify="required"
+                       placeholder="请输入ClaimValue" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+<script>
+    var options = {
+        url: '/Admin/user/Load',
+        add: '/Admin/user/Add',
+        update: '/Admin/user/Update',
+        delete: '/Admin/user/delete',
+        id: 'users',
+        form: undefined,
+        formId: undefined,
+        menuName: 'user',
+        key: 'id',
+        tabName: 'user_tabs',
+        many: true,
+        tabs: {
+            users: {
+                form: "#formEdit",
+                formId: "#divEdit",
+                reload: true,
+                options: {
+                    elem: '#users',
+                    id: 'users',
+                    url: '/admin/user/load'
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/user/Add',
+                update: '/Admin/user/Update',
+                delete: '/Admin/user/delete',
+            },
+            roles: {
+                reload: false,
+                form: "#formRoleEdit",
+                formId: "#divRoleEdit",
+                options: {
+                    elem: '#roles'
+                    , id: 'roles'
+                    , url: '/admin/user/role',
+                    cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'id', width: 180, title: 'Id', sort: true }
+                        , { field: 'name', width: 180, title: 'Name', sort: true }
+                        , { field: 'normalized_name', width: 150, title: 'NormalizedName' }
+                        , { field: 'concurrency_stamp', width: 150, title: 'ConcurrencyStamp' }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/user/AddRole',
+                update: '/Admin/user/UpdateRole',
+                delete: '/Admin/user/deleteRole'
+            },
+            tokens: {
+                reload: false,
+                form: "#formTokenEdit",
+                formId: "#divTokenEdit",
+                options: {
+                    elem: '#tokens',
+                    id: 'tokens'
+                    , url: '/admin/user/UserToken'
+                    , cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'user_id', width: 180, title: 'UserId', sort: true }//pk
+                        , { field: 'login_provider', width: 180, title: 'LoginProvider' }//pk
+                        , { field: 'name', width: 180, title: 'Name', sort: true }//pk
+                        , { field: 'value', width: 180, title: 'Value' }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'user_id',
+                add: '/Admin/user/AddToken',
+                update: '/Admin/user/UpdateToken',
+                delete: '/Admin/user/deleteToken'
+            },
+            userLogins: {
+                reload: false,
+                form: "#formUserLoginEdit",
+                formId: "#divUserLoginEdit",
+                options: {
+                    elem: '#userLogins',
+                    id: 'userLogins'
+                    , url: '/admin/user/UserLogin'
+                    , cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'user_id', width: 180, title: 'UserId', sort: true }
+                        , { field: 'login_provider', width: 180, title: 'LoginProvider' }
+                        , { field: 'provider_key', width: 180, title: 'ProviderKey', sort: true }
+                        , { field: 'provider_display_name', width: 180, title: 'ProviderDisplayName' }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'user_id',
+                add: '/Admin/user/AddUserLogin',
+                update: '/Admin/user/UpdateUserLogin',
+                delete: '/Admin/user/deleteUserLogin'
+            },
+            userClaims: {
+                reload: false,
+                form: "#formUserClaimEdit",
+                formId: "#divUserClaimEdit",
+                options: {
+                    elem: '#userClaims',
+                    id: 'userClaims'
+                    , url: '/admin/user/UserClaim'
+                    , cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'user_id', width: 180, title: 'UserId', sort: true }
+                        , { field: 'id', width: 180, title: 'Id' }
+                        , { field: 'claim_type', width: 180, title: 'ClaimType', sort: true }
+                        , { field: 'claim_value', width: 180, title: 'ClaimValue' }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/user/AddUserClaim',
+                update: '/Admin/user/UpdateUserClaim',
+                delete: '/Admin/user/deleteUserClaim'
+            },
+            roleClaims: {
+                reload: false,
+                form: "#formRoleClaimEdit",
+                formId: "#divRoleClaimEdit",
+                options: {
+                    elem: '#roleClaims',
+                    id: 'roleClaims'
+                    , url: '/admin/user/RoleClaim'
+                    , cols: [[
+                        { type: 'checkbox', fixed: 'left' },
+                        { field: 'role_id', width: 180, title: 'RoleId', sort: true }
+                        , { field: 'id', width: 180, title: 'Id' }
+                        , { field: 'claim_type', width: 180, title: 'ClaimType', sort: true }
+                        , { field: 'claim_value', width: 180, title: 'ClaimValue' }
+                        , { fixed: 'right', width: 200, align: 'center', toolbar: '#barList' }
+                    ]]
+                },
+                table: undefined,
+                initial: undefined,
+                key: 'id',
+                add: '/Admin/user/AddRoleClaim',
+                update: '/Admin/user/UpdateRoleClaim',
+                delete: '/Admin/user/deleteRoleClaim'
+            }
+        }
+    };
+
+    initial(options);
+</script>
